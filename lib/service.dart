@@ -3,7 +3,7 @@ import 'package:map/models.dart';
 
 abstract class AppLocation{
   Future<AppLatLong> getCurrentLocation();
-  Future<AppLatLong> requestPermission();
+  Future<bool> requestPermission();
   Future<bool> checkPermission();
 
 }
@@ -22,14 +22,16 @@ class LocationService implements AppLocation{
   @override
   Future<AppLatLong> getCurrentLocation() {
    return Geolocator.getCurrentPosition().then((value){
-     return AppLatLong(lat: value.latitude, long: value.longitude)
+     return AppLatLong(lat: value.latitude, long: value.longitude);
    }).catchError((_)=> defLocation);
   }
 
   @override
-  Future<AppLatLong> requestPermission() {
+  Future<bool> requestPermission() {
     // TODO: implement requestPermission
-    throw UnimplementedError();
+    return Geolocator.requestPermission().then((value)=>
+    value == LocationPermission.always || value == LocationPermission.whileInUse
+    ).catchError((_)=> false);
   }
 
 }
