@@ -41,7 +41,7 @@ class LocationService implements AppLocation {
 
     return Geolocator.getCurrentPosition(
           // ignore: deprecated_member_use
-          desiredAccuracy: LocationAccuracy.best,
+          desiredAccuracy: LocationAccuracy.high,
         )
         .then((value) {
           return AppLatLong(lat: value.latitude, long: value.longitude);

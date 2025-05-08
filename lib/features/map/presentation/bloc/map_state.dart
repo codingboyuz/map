@@ -36,12 +36,12 @@ final class SuccessSendState extends MapState {
 
 
 final class MapLoadedState extends MapState {
-  final List<MapObject> mapObject;
+  final List<MapObject> mapObject;final List<Point> polylinePoints;
   final Completer<YandexMapController> mapController;
 
 
-  const MapLoadedState(this.mapObject, this.mapController);
+  const MapLoadedState(this.mapObject, this.mapController,this.polylinePoints);
 
   @override
-  List<Object?> get props => [mapObject,mapController];
+  List<Object?> get props => [mapObject,mapController,polylinePoints];
 }

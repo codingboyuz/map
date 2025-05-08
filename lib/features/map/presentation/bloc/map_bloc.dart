@@ -52,7 +52,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     if (!await LocationService().checkPermission()) {
       await LocationService().requestPermission();
     }
-    emit(MapLoadedState(_mapObjects, _mapController));
+    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints));
     await _fetchCurrentLocation();
   }
 
@@ -60,7 +60,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _mapObjects = [];
     _polylinePoints.clear();
 
-    emit(MapLoadedState(_mapObjects, _mapController));
+    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints));
   }
 
   // Joriy joylashuvni olish
@@ -98,7 +98,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final cameraPosition = await controller.getCameraPosition();
     final centerPoint = cameraPosition.target;
     count++;
-    emit(MapLoadedState(_mapObjects, _mapController));
+    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints));
 
     await _addMarkers(point: centerPoint, count: count, emit: emit);
   }
@@ -131,7 +131,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           ..add(polyline);
 
     // Emit qilamiz — bu UI ni yangilaydi
-    emit(MapLoadedState(_mapObjects, _mapController));
+    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints));
   }
 
   Future<void> _sendLocation(

@@ -22,9 +22,12 @@ class MapRepositoryImpl implements MapRepository{
     if (res.isSuccess) {
       try {
         log("Res: ${res.response}");
+        print("res===================${res.response}");
         final result = Location.fromJson(res.response);
         return Right(result);
       } catch (e) {
+        print("ex===================${e}");
+
         return Left(Failure(message: "error $e"));
       }
     }

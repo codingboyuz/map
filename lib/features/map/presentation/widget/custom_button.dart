@@ -1,22 +1,36 @@
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
   final Color color;
   final VoidCallback onPressed;
   final Widget child;
+  final EdgeInsets? margin;
+  final EdgeInsets? padding;
 
-  const CustomButton({super.key,  this.width =0,  this.height = 0,  this.color = Colors.white, required this.onPressed, required this.child});
+  const CustomButton({
+    super.key,
+    this.width,
+    this.height,
+    this.color = Colors.white,
+    required this.onPressed,
+    required this.child,
+    this.margin,
+    this.padding,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onPressed,
       child: Container(
+        margin: margin,
+        padding: padding,
         width: width,
         height: height,
-        decoration:BoxDecoration(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
@@ -38,4 +52,5 @@ class CustomButton extends StatelessWidget {
       ),
     );
   }
+
 }
