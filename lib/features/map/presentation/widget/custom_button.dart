@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatelessWidget {
   final double? width;
   final double? height;
-  final Color color;
+  final Color? color;
   final VoidCallback onPressed;
   final Widget child;
   final EdgeInsets? margin;
@@ -13,7 +13,7 @@ class CustomButton extends StatelessWidget {
     super.key,
     this.width,
     this.height,
-    this.color = Colors.white,
+    this.color,
     required this.onPressed,
     required this.child,
     this.margin,
@@ -31,7 +31,8 @@ class CustomButton extends StatelessWidget {
         height: height,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Colors.white,
+
+          color: color,
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(

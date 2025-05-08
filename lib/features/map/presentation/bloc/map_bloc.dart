@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 // ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:map/core/error/failure.dart';
 import 'package:map/core/models/location_model.dart';
 import 'package:map/core/models/models.dart';
@@ -16,7 +18,7 @@ part 'map_event.dart';
 part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
-  bool isLoading = false;
+  bool check = false;
   int count = 0;
   final MapUseCase mapUseCase;
   final Completer<YandexMapController> _mapController =
@@ -40,6 +42,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     });
 
     on<DeleteMarkerEvent>(_deleteMarker);
+    on<ConnectionWifiCheckEvent>(_checkConnectionToMyPC);
 
     on<SendLocationEvent>(_sendLocation);
   }
@@ -52,15 +55,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     if (!await LocationService().checkPermission()) {
       await LocationService().requestPermission();
     }
-    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints));
+    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints,check));
     await _fetchCurrentLocation();
   }
 
+
+
+
+  // xaritadan markerlarni o'chirish
   void _deleteMarker(DeleteMarkerEvent event, Emitter<MapState> emit) {
     _mapObjects = [];
     _polylinePoints.clear();
 
-    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints));
+    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints,check));
   }
 
   // Joriy joylashuvni olish
@@ -98,16 +105,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final cameraPosition = await controller.getCameraPosition();
     final centerPoint = cameraPosition.target;
     count++;
-    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints));
+    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints,check));
 
     await _addMarkers(point: centerPoint, count: count, emit: emit);
   }
 
-  Future<void> _addMarkers({
-    required Point point,
-    required int count,
-    required Emitter<MapState> emit,
-  }) async {
+  // marker
+  Future<void> _addMarkers({required Point point,required int count,required Emitter<MapState> emit,}) async {
     final markerIcon = await createCustomMarkerBitmap(count);
     final marker = PlacemarkMapObject(
       mapId: MapObjectId('placemark_$count'),
@@ -131,9 +135,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           ..add(polyline);
 
     // Emit qilamiz — bu UI ni yangilaydi
-    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints));
+    emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints,check));
   }
 
+  // pointlarni yuborish
   Future<void> _sendLocation(
     SendLocationEvent event,
     Emitter<MapState> emit,
@@ -161,4 +166,43 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       );
     }
   }
+
+
+
+  Future<void>_checkConnectionToMyPC(ConnectionWifiCheckEvent event , Emitter<MapState> emit) async {
+    const ip = "192.168.137.1"; // kompyuteringizning IP manzili
+    final isReachable = await pingMyComputer(
+      ip,
+      port: 8000,
+    ); // port mos bo'lishi kerak
+    if (isReachable) {
+      check = true;
+      emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints,check));
+      print("Kompyuterga ulanish mavjud");
+    } else {
+      check = false;
+
+      emit(MapLoadedState(_mapObjects, _mapController,_polylinePoints,check));
+
+      print("Kompyuterga ulanish yo'q");
+    }
+  }
+
+  Future<bool> pingMyComputer(
+      String ipAddress, {
+        int port = 80,
+        Duration timeout = const Duration(seconds: 3),
+      }) async {
+    try {
+      final socket = await Socket.connect(ipAddress, port, timeout: timeout);
+      socket.destroy();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+
+
+
 }

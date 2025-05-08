@@ -9,8 +9,6 @@ final class MapInitial extends MapState {
   List<Object> get props => [];
 }
 
-
-
 final class MapLoadingState extends MapState {
   const MapLoadingState();
 
@@ -20,6 +18,7 @@ final class MapLoadingState extends MapState {
 
 final class MapErrorState extends MapState {
   final Failure failure;
+
   const MapErrorState({required this.failure});
 
   @override
@@ -27,21 +26,31 @@ final class MapErrorState extends MapState {
 }
 
 final class SuccessSendState extends MapState {
-  final  data;
+  final data;
+
   const SuccessSendState({required this.data});
 
   @override
   List<Object?> get props => [data];
 }
 
-
 final class MapLoadedState extends MapState {
-  final List<MapObject> mapObject;final List<Point> polylinePoints;
+  final List<MapObject> mapObject;
+  final List<Point> polylinePoints;
   final Completer<YandexMapController> mapController;
+  final bool check;
 
-
-  const MapLoadedState(this.mapObject, this.mapController,this.polylinePoints);
+  const MapLoadedState(this.mapObject, this.mapController, this.polylinePoints, this.check, );
 
   @override
-  List<Object?> get props => [mapObject,mapController,polylinePoints];
+  List<Object?> get props => [mapObject, mapController, polylinePoints,check];
+}
+
+class LocationUpdate extends MapState {
+  final Position? position;
+
+  const LocationUpdate(this.position);
+
+  @override
+  List<Object?> get props => [position];
 }

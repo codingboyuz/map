@@ -41,19 +41,19 @@ class NavigationButton extends StatelessWidget {
               onPressed: () {
                 context.read<MapBloc>().add(SendLocationEvent());
               },
-              icon: Icon(Icons.send),
+              icon: Icon(Icons.send,size: 30,),
             ),
             IconButton(
               onPressed: () {
                 context.read<MapBloc>().add(FetchCurrentLocationEvent());
               },
-              icon: Icon(Icons.gps_fixed),
+              icon: Icon(Icons.gps_fixed,size: 30,),
             ),
             IconButton(
               onPressed: () {
                 context.read<MapBloc>().add(OnTabMapEvent());
               },
-              icon: Icon(Icons.add),
+              icon: Icon(Icons.add,size: 30,),
             ),
           ],
         ),

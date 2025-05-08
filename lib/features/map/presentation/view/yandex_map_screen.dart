@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // 🔧 MUHIM!
 import 'package:map/features/map/presentation/bloc/map_bloc.dart';
@@ -18,51 +15,17 @@ class YandexMapScreen extends StatefulWidget {
 class _YandexMapScreenState extends State<YandexMapScreen>
     with TickerProviderStateMixin {
   late AnimationController _controller;
-  late AnimationController _navController;
   late Animation<Offset> _offsetAnimationButton;
 
-  void checkConnectionToMyPC() async {
-    const ip = "192.168.137.1"; // kompyuteringizning IP manzili
-    final isReachable = await pingMyComputer(
-      ip,
-      port: 8000,
-    ); // port mos bo'lishi kerak
-    if (isReachable) {
-      print("Kompyuterga ulanish mavjud");
-    } else {
-      print("Kompyuterga ulanish yo'q");
-    }
-  }
 
-  Future<bool> pingMyComputer(
-    String ipAddress, {
-    int port = 80,
-    Duration timeout = const Duration(seconds: 3),
-  }) async {
-    try {
-      final socket = await Socket.connect(ipAddress, port, timeout: timeout);
-      socket.destroy();
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-
-    checkConnectionToMyPC();
-
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _navController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
     _offsetAnimationButton = Tween<Offset>(
       begin: const Offset(1.5, 0), // o‘ngdan chiqadi
       end: Offset.zero,
@@ -70,8 +33,8 @@ class _YandexMapScreenState extends State<YandexMapScreen>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MapBloc>().add(InitPermissionAndFetchEvent());
+
     });
-    _navController.forward(); // animatsiyani boshlash
   }
 
   @override
@@ -86,11 +49,13 @@ class _YandexMapScreenState extends State<YandexMapScreen>
     print("=======================================================================================================");
     print("Build UI");
     print("=======================================================================================================");
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: BlocBuilder<MapBloc, MapState>(
         builder: (context, state) {
           if (state is MapLoadedState) {
+            print("=======================================================================================================");
+            print(state.check);
+            print("=======================================================================================================");
             if (state.mapObject.isNotEmpty) {
               _controller.forward(); // animatsiyani boshlash
             }
@@ -115,6 +80,7 @@ class _YandexMapScreenState extends State<YandexMapScreen>
                     child: CustomButton(
                       height: 50,
                       width: 50,
+                      color: Colors.white,
                       onPressed: () {
                         context.read<MapBloc>().add(DeleteMarkerEvent());
                         _controller.reverse();
@@ -126,17 +92,15 @@ class _YandexMapScreenState extends State<YandexMapScreen>
                 Positioned(
                   right: 20,
                   top: 60,
-                  child: SlideTransition(
-                    position: _offsetAnimationButton,
-                    child: CustomButton(
-                      height: 50,
-                      width: 50,
-                      onPressed: () {
-                        context.read<MapBloc>().add(DeleteMarkerEvent());
-                        _controller.reverse();
-                      },
-                      child: Icon(Icons.wifi, size: 30),
-                    ),
+                  child: CustomButton(
+                    height: 50,
+                    width: 50,
+                    color: state.check != true ? Colors.white :Colors.green,
+                    onPressed: () {
+                       context.read<MapBloc>().add(ConnectionWifiCheckEvent());
+                      _controller.reverse();
+                    },
+                    child: Icon(Icons.wifi, size: 30 , color:state.check != true ?Colors.red :Colors.white),
                   ),
                 ),
                 const Center(

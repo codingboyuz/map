@@ -11,3 +11,5 @@ final class InitPermissionAndFetchEvent  extends MapEvent{}
 final class FetchCurrentLocationEvent  extends MapEvent{}
 final class DeleteMarkerEvent  extends MapEvent{}
 final class SendLocationEvent  extends MapEvent{}
+final class ConnectionWifiCheckEvent  extends MapEvent{}
+
