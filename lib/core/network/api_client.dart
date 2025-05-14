@@ -34,8 +34,14 @@ class ApiClient {
           headers: isHeader ? header : null,
         ),
       );
+      print("res=============== ${res.statusCode}");
+      print("res.data=============== ${res.data}");
+      print("runtimeType=============== ${res.data.runtimeType}");
+      print("res=============== ${res.statusMessage}");
+
       return _handleResponse(res);
     } on DioException catch (e) {
+      print("error++++++++++++++++++++++++===:$e");
       return _handleError(e);
     }
   }

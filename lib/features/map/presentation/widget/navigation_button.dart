@@ -40,6 +40,7 @@ class NavigationButton extends StatelessWidget {
             IconButton(
               onPressed: () {
                 context.read<MapBloc>().add(SendLocationEvent());
+                context.read<MapBloc>().add(DeleteMarkerEvent());
               },
               icon: Icon(Icons.send,size: 30,),
             ),

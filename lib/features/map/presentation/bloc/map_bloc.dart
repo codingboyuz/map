@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:map/core/error/failure.dart';
 import 'package:map/core/models/location_model.dart';
+import 'package:map/core/models/message_model.dart';
 import 'package:map/core/models/models.dart';
 import 'package:map/core/service/service.dart';
 import 'package:map/features/map/domain/usecase/map_use_case.dart';
@@ -155,6 +156,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             longitude: point.longitude,
           ),
         );
+
+
       }
     }
     if (locations.isNotEmpty) {
@@ -162,7 +165,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       final result = await mapUseCase.call(location);
       result.fold(
         (left) => emit(MapErrorState(failure: Failure(message: left.message))),
-        (right) => SuccessSendState(data: right.locations),
+        (right) {
+          return  emit(SuccessSendState(message: right));
+        }
       );
     }
   }
@@ -170,10 +175,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
 
   Future<void>_checkConnectionToMyPC(ConnectionWifiCheckEvent event , Emitter<MapState> emit) async {
-    const ip = "192.168.137.1"; // kompyuteringizning IP manzili
+    const ip = "192.168.4.1"; // kompyuteringizning IP manzili
     final isReachable = await pingMyComputer(
       ip,
-      port: 8000,
+      port: 80,
     ); // port mos bo'lishi kerak
     if (isReachable) {
       check = true;

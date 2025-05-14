@@ -3,13 +3,14 @@ import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:map/core/error/failure.dart';
 import 'package:map/core/models/location_model.dart';
+import 'package:map/core/models/message_model.dart';
 import 'package:map/core/network/api_client.dart';
 import 'package:map/core/network/endpoint.dart';
 import 'package:map/features/map/domain/repository/map_repository.dart';
 
 class MapRepositoryImpl implements MapRepository{
   @override
-  Future<Either<Failure, Location>> postLocation(Location body) async{
+  Future<Either<Failure, MessageModel>> postLocation(Location body) async{
     // TODO: implement postLocation
 
     print(body);
@@ -19,14 +20,16 @@ class MapRepositoryImpl implements MapRepository{
       isHeader: true,
       body: body.toJson(), // Pass the Map here instead of the JSON string
     );
+
+    print("======================================================${res.response}");
+
     if (res.isSuccess) {
       try {
-        log("Res: ${res.response}");
-        print("res===================${res.response}");
-        final result = Location.fromJson(res.response);
+
+        MessageModel result = MessageModel.fromJson(res.response);
+        print("======================================================");
         return Right(result);
       } catch (e) {
-        print("ex===================${e}");
 
         return Left(Failure(message: "error $e"));
       }

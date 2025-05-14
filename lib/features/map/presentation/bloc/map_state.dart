@@ -26,12 +26,12 @@ final class MapErrorState extends MapState {
 }
 
 final class SuccessSendState extends MapState {
-  final data;
+  final MessageModel message;
 
-  const SuccessSendState({required this.data});
+  const SuccessSendState({required this.message});
 
   @override
-  List<Object?> get props => [data];
+  List<Object?> get props => [message];
 }
 
 final class MapLoadedState extends MapState {
